@@ -15,23 +15,25 @@ import {
   TextField,
   Toolbar,
   Typography,
+  Button,
+  Link,
 } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import { GithubData, LangName, Langs } from "./types";
+import { searchCodeRepo } from "./api";
 
-enum Langs {
-  JavaScript = "js",
-  CSS = "css",
-  HTML = "html",
-}
-
-const LangName: Record<Langs, string> = {
-  [Langs.JavaScript]: "JavaScript",
-  [Langs.CSS]: "CSS",
-  [Langs.HTML]: "HTML",
-};
+const useStyles = makeStyles((theme) => ({
+  searchInput: {
+    flex: 1,
+  },
+  searchButton: {},
+}));
 
 function App() {
   const [lang, setLang] = useState<Langs>(Langs.JavaScript);
   const [q, setQ] = useState("");
+  const [data, setData] = useState<GithubData[]>([]);
+  const classes = useStyles();
 
   return (
     <Grid container direction="column" spacing={3}>
@@ -63,42 +65,57 @@ function App() {
                   <Tab label={LangName[Langs.HTML]} value={Langs.HTML} />
                 </Tabs>
               </Grid>
-              <Grid container direction="column" item xs={12}>
+              <Grid container direction="row" item xs={12}>
                 <TextField
-                  id="outlined-basic"
                   label="Search phrase"
                   variant="outlined"
                   value={q}
+                  className={classes.searchInput}
                   onChange={(e) => setQ(e.target.value)}
                 />
+                <Button
+                  variant="contained"
+                  size="large"
+                  color="primary"
+                  className={classes.searchButton}
+                  onClick={async () => {
+                    const data = await searchCodeRepo(lang, q);
+                    setData(data);
+                  }}
+                >
+                  Search
+                </Button>
               </Grid>
               <Grid item xs={12}>
                 <TableContainer component={Paper}>
-                  <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                  <Table>
                     <TableHead>
                       <TableRow>
                         <TableCell>Name</TableCell>
-                        <TableCell align="right">Path</TableCell>
-                        <TableCell align="right">GitHub Link</TableCell>
+                        <TableCell>Path</TableCell>
+                        <TableCell>GitHub Link</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {/* {[].map((row) => (
-                        <TableRow
-                          key={row.name}
-                          sx={{
-                            "&:last-child td, &:last-child th": { border: 0 },
-                          }}
-                        >
-                          <TableCell component="th" scope="row">
-                            {row.name}
+                      {data.map((row) => (
+                        <TableRow key={row.url}>
+                          <TableCell>
+                            <Typography variant="body1">{row.name}</Typography>
                           </TableCell>
-                          <TableCell align="right">{row.calories}</TableCell>
-                          <TableCell align="right">{row.fat}</TableCell>
-                          <TableCell align="right">{row.carbs}</TableCell>
-                          <TableCell align="right">{row.protein}</TableCell>
+
+                          <TableCell>
+                            <Typography variant="body1">
+                              {row.path.slice(0, 20)}
+                            </Typography>
+                          </TableCell>
+
+                          <TableCell>
+                            <Link href={row.html_url} target="_blank">
+                              Open on GitHub
+                            </Link>
+                          </TableCell>
                         </TableRow>
-                      ))} */}
+                      ))}
                     </TableBody>
                   </Table>
                 </TableContainer>
