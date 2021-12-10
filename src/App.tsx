@@ -4,23 +4,16 @@ import {
   AppBar,
   Grid,
   Tab,
-  Table,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TableCell,
-  Paper,
-  TableBody,
   Tabs,
   TextField,
   Toolbar,
   Typography,
   Button,
-  Link,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { GithubData, LangName, Langs } from "./types";
 import { searchCodeRepo } from "./api";
+import { GithubDataTable } from "./GithubDataTable";
 
 const useStyles = makeStyles((theme) => ({
   searchInput: {
@@ -87,38 +80,7 @@ function App() {
                 </Button>
               </Grid>
               <Grid item xs={12}>
-                <TableContainer component={Paper}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Name</TableCell>
-                        <TableCell>Path</TableCell>
-                        <TableCell>GitHub Link</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {data.map((row) => (
-                        <TableRow key={row.url}>
-                          <TableCell>
-                            <Typography variant="body1">{row.name}</Typography>
-                          </TableCell>
-
-                          <TableCell>
-                            <Typography variant="body1">
-                              {row.path.slice(0, 20)}
-                            </Typography>
-                          </TableCell>
-
-                          <TableCell>
-                            <Link href={row.html_url} target="_blank">
-                              Open on GitHub
-                            </Link>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
+                <GithubDataTable data={data} />
               </Grid>
             </Grid>
           </Grid>
