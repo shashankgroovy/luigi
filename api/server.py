@@ -9,10 +9,12 @@ There are 3 primary things that are happening in this file:
 import os
 
 from flask import Flask, jsonify
+from flask_cors import CORS
 
 from v1.api import api_v1
 
 app = Flask("api")
+CORS(app)
 
 # Register blueprints
 app.register_blueprint(api_v1, url_prefix="/v1")
