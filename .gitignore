@@ -21,3 +21,10 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Python things
+**/__pycache__/
+*.pyc
+
+# vim swap files
+*.swp
