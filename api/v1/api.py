@@ -1,6 +1,9 @@
 import requests
 from cerberus import Validator
 from flask import Blueprint, request, jsonify
+from db import get_db
+
+from v1.model import save_search
 
 # Create blueprint for `v1` API
 api_v1 = Blueprint('api_v1', __name__)
@@ -20,6 +23,7 @@ def search():
         return jsonify(v.errors), 400
 
     try:
+        # Fetch query parameters
         search = request.args.get('search')
         lang = request.args.get('language')
         repo = request.args.get('repository')
@@ -30,6 +34,13 @@ def search():
         )
 
         if r.status_code == 200:
+            # Set the db context
+            _ = get_db()
+
+            # Store the search term in the database
+            save_search(f'{search}|{lang}|{repo}', request.remote_addr)
+
+            # Get the search results
             json_items = r.json()['items']
             
             # Filter the items to only include the keys that we expect

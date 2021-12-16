@@ -31,3 +31,7 @@ yarn-error.log*
 
 # env files
 .envrc
+
+# DB
+*.db
+*.sqlite

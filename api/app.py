@@ -14,7 +14,16 @@ from flask_cors import CORS
 from v1.api import api_v1
 
 app = Flask("api")
+
+# Enable CORS
 CORS(app)
+
+# Initialize the database
+try:
+    import db
+    db.init_app(app)
+except ImportError:
+    pass
 
 # Register blueprints
 app.register_blueprint(api_v1, url_prefix="/v1")
@@ -26,5 +35,5 @@ def health():
 
 
 if __name__ == '__main__':
-    app.run(host=os.environ.get('HOST'),
-            port=os.environ.get('PORT', 5000))
+    app.run(host=os.environ.get('APP_HOST'),
+            port=os.environ.get('APP_PORT', 5000))

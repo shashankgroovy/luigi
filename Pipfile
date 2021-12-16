@@ -8,8 +8,12 @@ cerberus = "*"
 requests = "*"
 flask = "*"
 flask-cors = "*"
+redis = "*"
+click = "*"
 
 [dev-packages]
+autopep8 = "*"
+ipdb = "*"
 
 [requires]
 python_version = "3.9"
