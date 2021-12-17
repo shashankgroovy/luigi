@@ -2,6 +2,7 @@ import requests
 from cerberus import Validator
 from flask import Blueprint, request, jsonify
 from db import get_db
+from app import cache
 
 from v1.model import save_search
 
@@ -13,6 +14,7 @@ GITHUB_SEARCH_CODE_URL = GITHUB_API_URL + "/search/code"
 
 
 @api_v1.route('/search', methods=['GET'])
+@cache.cached(timeout=30, query_string=True)
 def search():
     """Search handler searches for a given query in a given language and
     repository on Github."""

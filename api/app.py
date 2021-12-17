@@ -8,32 +8,43 @@ There are 3 primary things that are happening in this file:
 """
 import os
 
-from flask import Flask, jsonify
+from flask import Flask, g, jsonify
+from flask_caching import Cache
 from flask_cors import CORS
 
-from v1.api import api_v1
+# Set the cache instance as a global variable.
+cache = Cache()
 
-app = Flask("api")
+def create_app():
+    """
+    Create and configure the API server.
+    """
+    app = Flask("api", instance_relative_config=True)
+    app.config.from_object('config.BaseConfig')
 
-# Enable CORS
-CORS(app)
+    # Enable CORS
+    CORS(app)
 
-# Initialize the database
-try:
+    # Initialize the caching layer
+    cache.init_app(app, config={'CACHE_TYPE': app.config['CACHE_TYPE']})
+
+    # Initialize the database
     import db
     db.init_app(app)
-except ImportError:
-    pass
 
-# Register blueprints
-app.register_blueprint(api_v1, url_prefix="/v1")
+    # Add a health check route.
+    @app.route('/health')
+    def health():
+        return jsonify({'status': 'ok'})
 
-# Add the health check route.
-@app.route('/health')
-def health():
-    return jsonify({'status': 'ok'})
+    # Register all blueprints
+    from v1.api import api_v1
+    app.register_blueprint(api_v1, url_prefix="/v1")
+
+    return app
 
 
 if __name__ == '__main__':
+    app = create_app()
     app.run(host=os.environ.get('APP_HOST'),
             port=os.environ.get('APP_PORT', 5000))
