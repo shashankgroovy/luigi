@@ -23,23 +23,35 @@ export function GithubDataTable({ data }: { data: GithubData[] }) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((row) => (
-            <TableRow key={row.url}>
-              <TableCell>
-                <Typography variant="body1">{row.name}</Typography>
-              </TableCell>
+          {data.length > 0 &&
+            data.map((row) => (
+              <TableRow key={row.url}>
+                <TableCell>
+                  <Typography variant="body1">{row.name}</Typography>
+                </TableCell>
 
-              <TableCell>
-                <Typography variant="body1">{row.path.slice(0, 20)}</Typography>
-              </TableCell>
+                <TableCell>
+                  <Typography variant="body1">
+                    {row.path.slice(0, 20)}
+                  </Typography>
+                </TableCell>
 
-              <TableCell>
-                <Link href={row.html_url} target="_blank">
-                  Open on GitHub
-                </Link>
+                <TableCell>
+                  <Link href={row.html_url} target="_blank">
+                    Open on GitHub
+                  </Link>
+                </TableCell>
+              </TableRow>
+            ))}
+          {data.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={3}>
+                <Typography variant="body1" textAlign="center">
+                  No results
+                </Typography>
               </TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </TableContainer>

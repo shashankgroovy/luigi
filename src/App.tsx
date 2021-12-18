@@ -65,6 +65,13 @@ function App() {
                   value={q}
                   className={classes.searchInput}
                   onChange={(e) => setQ(e.target.value)}
+                  onKeyPress={async (e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      const data = await searchCodeRepo(lang, q);
+                      setData(data);
+                    }
+                  }}
                 />
                 <Button
                   variant="contained"
