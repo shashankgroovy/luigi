@@ -12,24 +12,32 @@ from flask import Flask, g, jsonify
 from flask_caching import Cache
 from flask_cors import CORS
 
-# Set the cache instance as a global variable.
+from logger import get_logger
+
+# Set the cache instance and log as a global variable.
 cache = Cache()
+log = get_logger()
+
 
 def create_app():
     """
     Create and configure the API server.
     """
+    log.info('Initializing API server')
     app = Flask("api", instance_relative_config=True)
     app.config.from_object('config.BaseConfig')
 
     # Enable CORS
+    log.info("Enabling CORS")
     CORS(app)
 
     # Initialize the caching layer
+    log.info("Initializing the cache layer")
     cache.init_app(app, config={'CACHE_TYPE': app.config['CACHE_TYPE']})
 
     # Initialize the database
     import db
+    log.info("Initializing the database")
     db.init_app(app)
 
     # Add a health check route.
@@ -40,7 +48,9 @@ def create_app():
     # Register all blueprints
     from v1.api import api_v1
     app.register_blueprint(api_v1, url_prefix="/v1")
+    log.info("Registering API v1 routes")
 
+    # Return the app
     return app
 
 

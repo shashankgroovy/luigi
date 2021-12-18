@@ -12,6 +12,7 @@ redis = "*"
 click = "*"
 flask-caching = "*"
 gunicorn = "*"
+python-json-logger = "*"
 
 [dev-packages]
 autopep8 = "*"

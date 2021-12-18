@@ -1,13 +1,17 @@
 import requests
 from cerberus import Validator
 from flask import Blueprint, request, jsonify
-from db import get_db
-from app import cache
 
+import logger
+from app import cache
+from db import get_db
 from v1.model import save_search
+
 
 # Create blueprint for `v1` API
 api_v1 = Blueprint('api_v1', __name__)
+
+log = logger.get_logger()
 
 GITHUB_API_URL = "https://api.github.com"
 GITHUB_SEARCH_CODE_URL = GITHUB_API_URL + "/search/code"
@@ -19,9 +23,12 @@ def search():
     """Search handler searches for a given query in a given language and
     repository on Github."""
 
+    log.info("Got a search query")
+
     # Validate the search query
     v = search_validator()
     if not v.validate(request.args):
+        log.error("Validation error: %s", v.errors)
         return jsonify(v.errors), 400
 
     try:
@@ -31,6 +38,7 @@ def search():
         repo = request.args.get('repository')
 
         # Make a request to the GitHub API
+        log.info("Fetching results from GitHub API")
         r = requests.get(
             f'{GITHUB_SEARCH_CODE_URL}?q={search}+in:file+language:{lang}+repo:{repo}',
         )
@@ -40,6 +48,7 @@ def search():
             _ = get_db()
 
             # Store the search term in the database
+            log.info("Saving search params to database")
             save_search(f'{search}|{lang}|{repo}', request.remote_addr)
 
             # Get the search results
@@ -48,8 +57,10 @@ def search():
             # Filter the items to only include the keys that we expect
             items = [{k: item[k] for k in search_response_keys()} for item in json_items]
 
+            log.info("Successfully fetched results")
             return jsonify({'items': items}), 200
         else:
+            log.error("While fetching results from GitHub API, got status code %s", r.status_code)
             return jsonify({'error': 'Something went wrong!'}), 500
 
     except Exception as e:
