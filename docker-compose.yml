@@ -34,7 +34,7 @@ services:
       dockerfile: Dockerfile.client
     image: luigi_client
     ports:
-      - "3000:80"
+      - "8000:80"
     env_file:
       - .env
     depends_on:
