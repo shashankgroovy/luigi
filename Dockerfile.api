@@ -1,0 +1,23 @@
+FROM python:3.9-alpine
+WORKDIR /app
+
+# Copy the requirements.txt file and install the dependencies
+COPY api/requirements.txt requirements.txt
+RUN pip install -r ./requirements.txt
+
+# Copy the initializing script to start the application
+COPY api/init.sh init.sh
+RUN chmod +x /app/init.sh
+
+# Copy the api folder
+COPY api ./
+
+
+ARG DATABASE_URL
+ENV DATABASE_URL $DATABASE_URL
+
+# Expose the api port
+EXPOSE $APP_PORT
+
+# Indicate the initializing script as our entrypoint
+ENTRYPOINT /app/init.sh

@@ -1,0 +1,50 @@
+version: "3.9"
+services:
+  redis:
+    hostname: localhost
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    expose:
+      - "6379"
+    networks:
+      - mario_network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    image: luigi_api
+    ports:
+      - "5000:5000"
+    environment:
+      - "DATABASE_URL=${DATABASE_URL}"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    networks:
+      - mario_network
+    volumes:
+      - ./data/db:/db/
+
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    image: luigi_client
+    ports:
+      - "3000:80"
+    env_file:
+      - .env
+    depends_on:
+      - api
+    networks:
+      - mario_network
+
+networks:
+  mario_network:
+    driver: bridge
+volumes:
+  data:
+    driver: local
