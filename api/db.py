@@ -6,7 +6,6 @@ from flask import current_app, g
 from flask.cli import with_appcontext
 
 
-_DATABASE = os.environ.get('DATABASE_URL')
 _default_schema_file = 'schema.sql'
 _encoding = 'utf-8'
 
@@ -15,7 +14,7 @@ def get_db():
     """Get the database connection"""
     if 'db' not in g:
         g.db = sqlite3.connect(
-            _DATABASE,
+            current_app.config['DATABASE_URL'],
             detect_types=sqlite3.PARSE_DECLTYPES
         )
         g.db.row_factory = sqlite3.Row
@@ -33,10 +32,13 @@ def close_db(e=None):
 
 def init_db():
     """Initialize the database"""
-    db = get_db()
+    db = sqlite3.connect(
+        os.environ.get('DATABASE_URL'),
+        detect_types=sqlite3.PARSE_DECLTYPES
+    )
 
-    with current_app.open_resource(_default_schema_file) as f:
-        db.executescript(f.read().decode(_encoding))
+    with open(_default_schema_file, encoding=_encoding) as f:
+        db.executescript(f.read())
 
 
 # Register commands
@@ -52,3 +54,8 @@ def init_app(app):
     """Initialize the app"""
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
+
+
+if __name__ == '__main__':
+    init_db()
+    print('Initialized the database.')
