@@ -93,31 +93,31 @@ Then run the following commands.
 
 3. Launch redis
 
-The flask api uses redis for caching which is a good way to speed up the
-application and cache any subsequent request from the same user for a given
-time. This ability is given to the flask server by the
-[`flask_caching`](https://flask-caching.readthedocs.io/en/latest/) package.
+   The flask api uses redis for caching which is a good way to speed up the
+   application and cache any subsequent request from the same user for a given
+   time. This ability is given to the flask server by the
+   [`flask_caching`](https://flask-caching.readthedocs.io/en/latest/) package.
 
-If you have redis installed locally, you can launch it using the following command.
+   If you have redis installed locally, you can launch it using the following command.
 
-```bash
-λ redis-server
-```
+   ```bash
+   λ redis-server
+   ```
 
-> If you're using the above command, you'll have to change the `CACHE_REDIS_URL=redis://redis:6379/0` to `CACHE_REDIS_URL=redis://localhost:6379/0`
+   > If you're using the above command, you'll have to change the `CACHE_REDIS_URL=redis://redis:6379/0` to `CACHE_REDIS_URL=redis://localhost:6379/0`
 
-Or, if you have the redis docker image available, you can launch it using the
-following command.
+   Or, if you have the redis docker image available, you can launch it using the
+   following command.
 
-```bash
-λ docker run -d -p 6379:6379 --name redis redis
-```
+   ```bash
+   λ docker run -d -p 6379:6379 --name redis redis
+   ```
 
-Or, using docker-compose you can launch it using the following command.
+   Or, using docker-compose you can launch it using the following command.
 
-```bash
-λ docker-compose up redis
-```
+   ```bash
+   λ docker-compose up redis
+   ```
 
 ### React dashboard
 
